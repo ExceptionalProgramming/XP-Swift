@@ -32,7 +32,7 @@ install:
       esac
       for Ubuntu in `echo $UBUNTU_VERSIONS | tr ',' '\n'`
       do
-        docker pull $Repo:$Swift-$Ubuntu
+        docker pull $Repo:$Ubuntu-$Swift
       done
     fi
 

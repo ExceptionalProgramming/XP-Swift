@@ -1,5 +1,9 @@
 # XPKit
 
+[![](https://travis-ci.com/ExceptionalProgramming/XP-Swift.svg?branch=master)][1]
+
+[1]: https://travis-ci.com/ExceptionalProgramming/XP-Swift
+
 **THE** framework for doing `Exceptional Programming`
 
 ## What is `Exceptional Programming`
