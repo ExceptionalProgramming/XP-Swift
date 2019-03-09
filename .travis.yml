@@ -42,8 +42,8 @@ after_success:
     if [[ "$TRAVIS_OS_NAME" == "osx" ]]
     then
       profile=.build/debug/codecov/default.profdata
-      executable=.build/debug/${PWD##*/}PackageTests.xctest/Contents/MacOS/${PWD##*/}PackageTests
-      coverage=.build/debug/codecov/${PWD##*/}.coverage.txt
+      executable=.build/debug/XPKitPackageTests.xctest/Contents/MacOS/XPKitPackageTests
+      coverage=.build/debug/codecov/XPKit.coverage.txt
       xcrun llvm-cov show -instr-profile $profile $executable > $coverage
       bash <(curl -s https://codecov.io/bash) -f $coverage
     fi
