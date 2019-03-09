@@ -1,11 +1,8 @@
-//
-//  LinuxMain.swift
-//  XPKit
-//
-
 import XCTest
+
 import XPKitTests
 
-XCTMain([
-	XPKitTests.allTests(),
-])
+var tests = [XCTestCaseEntry]()
+tests += XPKitTests.__allTests()
+
+XCTMain(tests)

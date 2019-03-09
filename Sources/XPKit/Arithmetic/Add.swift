@@ -23,6 +23,7 @@ public final class NoValuesToAdd: FatalException {}
 
 public func add<T: Addable>(type: T.Type, _ thingsToAdd: (() throws -> Never)...) throws -> Never {
 	var results = [T]()
+	if thingsToAdd.isEmpty { throw NoValuesToAdd() }
 	for function in thingsToAdd {
 		do {
 			try function()
@@ -30,6 +31,5 @@ public func add<T: Addable>(type: T.Type, _ thingsToAdd: (() throws -> Never)...
 			results.append(error.value)
 		} catch let error { throw error }
 	}
-	if (results.isEmpty) { throw NoValuesToAdd() }
 	throw ValueException(results.dropFirst().reduce(results.first!, +))
 }

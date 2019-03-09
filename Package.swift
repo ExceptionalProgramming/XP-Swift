@@ -1,4 +1,4 @@
-// swift-tools-version:4.2
+// swift-tools-version:5.0
 //
 //  Package.swift
 //  XPKit
@@ -11,12 +11,7 @@ let package = Package(
 	products: [
 		.library(
 			name: "XPKit",
-			type: .static,
 			targets: ["XPKit"]),
-		.library(
-			name: "dXPKit",
-			type: .dynamic,
-			targets: ["XPKit"])
 	],
 	targets: [
 		.target(

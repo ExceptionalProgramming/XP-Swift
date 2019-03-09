@@ -4,7 +4,7 @@
 //
 
 import XCTest
-@testable import XPKit
+import XPKit
 
 final class XPKitTests: XCTestCase {
 	func testExample() throws {
@@ -19,8 +19,4 @@ final class XPKitTests: XCTestCase {
 		
 		XCTAssertEqual(try get(from: { try fibonacci(10) }), 89)
 	}
-	
-	static var allTests = [
-		("testExample", testExample)
-	]
 }

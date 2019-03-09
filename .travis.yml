@@ -1,80 +1,49 @@
 language: minimal
-
-os:
-  - linux
-  - osx
-sudo: required
-osx_image: xcode10
-
-services:
-  - docker
+dist: xenial
 
 env:
   global:
-    - Repo=davidskrundz/swift
-    - UBUNTU_VERSIONS=14.04,16.04,18.04
+    - REPO=stdswift/build
   matrix:
-    - SWIFT_VERSION=4.2
-
-install:
-  - |
-    if [[ "$TRAVIS_OS_NAME" == "osx" ]]
-    then
-      eval "$(curl -sL https://swiftenv.fuller.li/install.sh)"
-    fi
-  - |
-    if [[ "$TRAVIS_OS_NAME" == "linux" ]]
-    then
-      case `echo $SWIFT_VERSION | grep -o "\." | grep -c "\."` in
-        0) Swift=$SWIFT_VERSION.0.0 ;;
-        1) Swift=$SWIFT_VERSION.0 ;;
-        2) Swift=$SWIFT_VERSION ;;
-      esac
-      for Ubuntu in `echo $UBUNTU_VERSIONS | tr ',' '\n'`
-      do
-        docker pull $Repo:$Ubuntu-$Swift
-      done
-    fi
-
-script:
-  - |
-    if [[ "$TRAVIS_OS_NAME" == "osx" ]]
-    then
-      swift test
-    fi
-  - |
-    if [[ "$TRAVIS_OS_NAME" == "linux" ]]
-    then
-      for Ubuntu in `echo $UBUNTU_VERSIONS | tr ',' '\n'`
-      do
-        docker run --volume `pwd`:/code --workdir /code $Repo:$Swift-$Ubuntu swift test
-      done
-    fi
+    - SWIFT=5.0   OS=trusty
+    - SWIFT=5.0   OS=xenial
+    - SWIFT=5.0   OS=bionic
 
 matrix:
   include:
     - os: osx
       env:
-      install:
-        - gem install xcpretty-travis-formatter
-      script:
-        - |
-          PROJ_OUTPUT=`swift package generate-xcodeproj --enable-code-coverage`
-          PROJ_OUTPUT=`swift package generate-xcodeproj --enable-code-coverage`
-          PROJ_NAME="${PROJ_OUTPUT/generated: .\//}"
-          SCHEME_NAME="${PROJ_NAME/.xcodeproj/}-Package"
-          MACOS_SDK=`xcodebuild -showsdks | grep macos | tail -n 1 | awk 'NF>1{print $NF}'`
-          WORKING_DIRECTORY=$(PWD) xcodebuild \
-            -project $PROJ_NAME \
-            -scheme $SCHEME_NAME \
-            -sdk $MACOS_SDK \
-            -destination arch=x86_64 \
-            -configuration Debug \
-            -enableCodeCoverage YES \
-            test | xcpretty -f `xcpretty-travis-formatter`
-      after_success:
-        - |
-          if [[ "$TRAVIS_BRANCH" == "master" && "$TRAVIS_PULL_REQUEST" == "false" ]]
-          then
-            bash <(curl -s https://codecov.io/bash)
-          fi
+      osx_image: xcode10.2
+
+install:
+  - |
+    set -e
+    if [[ "$TRAVIS_OS_NAME" == "linux" ]]
+    then
+      docker pull $REPO:$OS-$SWIFT
+    fi
+
+script:
+  - |
+    set -e
+    if [[ "$TRAVIS_OS_NAME" == "linux" ]]
+    then
+      docker run --volume `pwd`:/code --workdir /code $REPO:$OS-$SWIFT swift test
+    fi
+    if [[ "$TRAVIS_OS_NAME" == "osx" ]]
+    then
+      swift test --generate-linuxmain && git diff --exit-code
+      swift test --enable-code-coverage
+    fi
+
+after_success:
+  - |
+    set -e
+    if [[ "$TRAVIS_OS_NAME" == "osx" ]]
+    then
+      profile=.build/debug/codecov/default.profdata
+      executable=.build/debug/${PWD##*/}PackageTests.xctest/Contents/MacOS/${PWD##*/}PackageTests
+      coverage=.build/debug/codecov/${PWD##*/}.coverage.txt
+      xcrun llvm-cov show -instr-profile $profile $executable > $coverage
+      bash <(curl -s https://codecov.io/bash) -f $coverage
+    fi

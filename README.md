@@ -1,10 +1,13 @@
 # XPKit
 
-[![](https://travis-ci.com/ExceptionalProgramming/XP-Swift.svg?branch=master)][1]
+[![](https://img.shields.io/badge/Swift-5.0-orange.svg)][1]
+[![](https://img.shields.io/badge/os-macOS%20|%20Linux-lightgray.svg)][1]
+[![](https://travis-ci.com/ExceptionalProgramming/XP-Swift.svg?branch=master)][2]
 
-[1]: https://travis-ci.com/ExceptionalProgramming/XP-Swift
+[1]: https://swift.org/download/#releases
+[2]: https://travis-ci.com/ExceptionalProgramming/XP-Swift
 
-**THE** framework for doing `Exceptional Programming`
+**THE** framework for doing `Exceptional Programming` in Swift
 
 ## What is `Exceptional Programming`
 
@@ -17,6 +20,26 @@ Functions look like this:
 func name(...) throws -> Never {
 	...
 }
+```
+
+## Importing
+
+```Swift
+import XPKit
+```
+
+```Swift
+dependencies: [
+	.package(url: "https://github.com/ExceptionalProgramming/XP-Swift",
+	         from: "1.0.0")
+],
+targets: [
+	.target(
+		name: "",
+		dependencies: [
+			"XPKit"
+		]),
+]
 ```
 
 ## Exceptions
@@ -36,7 +59,7 @@ All `do/catch` blocks should rethrow any unhandled exceptions
 } catch let error { throw error }
 ```
 
-## main()
+## `main()`
 
 ```Swift
 do {
